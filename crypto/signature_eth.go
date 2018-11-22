@@ -22,7 +22,12 @@ import (
 // solution is to hash any input before calculating the signature.
 //
 // The produced signature is in the [R || S || V] format where V is 0 or 1.
-func Sign_ECDSA(hash []byte, prv *ecdsa.PrivateKey) ([]byte, error) {
+func Sign_ECDSA(hash []byte, key interface{}) ([]byte, error) {
+	prv, ok := key.(*ecdsa.PrivateKey)
+	if !ok {
+		return nil, errors.New("key is invalid")
+	}
+
 	if len(hash) != 32 {
 		return nil, fmt.Errorf("hash is required to be exactly 32 bytes (%d)", len(hash))
 	}
@@ -51,7 +56,12 @@ func Sign_ECDSA(hash []byte, prv *ecdsa.PrivateKey) ([]byte, error) {
 // The key used to calculate the signature is decrypted with the given password.
 //
 // https://github.com/ethereum/go-ethereum/wiki/Management-APIs#personal_sign
-func Sign_ETH(hash []byte, prv *ecdsa.PrivateKey) ([]byte, error) {
+func Sign_ETH(hash []byte, key interface{}) ([]byte, error) {
+	prv, ok := key.(*ecdsa.PrivateKey)
+	if !ok {
+		return nil, errors.New("key is invalid")
+	}
+
 	if len(hash) != 32 {
 		return nil, fmt.Errorf("hash is required to be exactly 32 bytes (%d)", len(hash))
 	}
@@ -76,7 +86,7 @@ func Sign_ETH(hash []byte, prv *ecdsa.PrivateKey) ([]byte, error) {
 // with a hex private key.
 //
 // The V value is 27/28 according to the yellow paper.
-func Sign(privateKey, msg string) (sig string, err error) {
+func Sign(privateKey, msg string) (sigHex string, err error) {
 	data := []byte(msg)
 	hash := SignHash(data)
 	prv, err := HexToECDSA(privateKey)
@@ -87,8 +97,8 @@ func Sign(privateKey, msg string) (sig string, err error) {
 	if err != nil {
 		return "", err
 	}
-	sig = hexutil.Encode(signature)
-	return sig, nil
+	sigHex = hexutil.Encode(signature)
+	return sigHex, nil
 }
 
 // Ecrecover returns the uncompressed public key that created the given signature.
