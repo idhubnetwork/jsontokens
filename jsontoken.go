@@ -3,19 +3,29 @@ package jsontokens
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/idhubnetwork/jsontokens/crypto"
 )
 
 type JsonToken struct {
-	Claim     map[string]interface{} `json:"-"`
+	Claim     map[string]interface{} `json:"-",omitempty`
 	ClaimJson string                 `json:"msg"`
 	Signature string                 `json:"sig"`
 }
 
+func NewJsonToken() *JsonToken {
+	token := JsonToken{
+		make(map[string]interface{}),
+		"",
+		"",
+	}
+	return &token
+}
+
 // Get retrieves the value corresponding with key from the JsonToken.
-func (t JsonToken) Get(key string) interface{} {
+func (t *JsonToken) Get(key string) interface{} {
 	if t.Claim == nil {
 		return nil
 	}
@@ -23,22 +33,22 @@ func (t JsonToken) Get(key string) interface{} {
 }
 
 // Set sets JsonToken[key] = val. It'll overwrite without warning.
-func (t JsonToken) Set(key string, val interface{}) {
+func (t *JsonToken) Set(key string, val interface{}) {
 	t.Claim[key] = val
 }
 
 // Del removes the value that corresponds with key from the JsonToken.
-func (t JsonToken) Del(key string) {
+func (t *JsonToken) Del(key string) {
 	delete(t.Claim, key)
 }
 
 // Has returns true if a value for the given key exists inside the JsonToken.
-func (t JsonToken) Has(key string) bool {
+func (t *JsonToken) Has(key string) bool {
 	_, ok := t.Claim[key]
 	return ok
 }
 
-func (t JsonToken) SignedMsg() error {
+func (t *JsonToken) SignedMsg() error {
 	if t.Claim == nil || len(t.Claim) == 0 {
 		return errors.New("jsontoken no claim")
 	}
@@ -48,28 +58,40 @@ func (t JsonToken) SignedMsg() error {
 	}
 
 	t.ClaimJson = hexutil.Encode(tmp)
+	fmt.Println(t.ClaimJson)
 	return nil
 }
 
-func (t JsonToken) GetToken() (string, error) {
+func (t *JsonToken) GetToken() (string, error) {
 	tmp, err := t.MarshalJSON()
 	if err != nil {
 		return "", err
 	}
 
 	return hexutil.Encode(tmp), nil
+	// return string(tmp), nil
 }
 
-func (t JsonToken) SetToken(token string) error {
+func (t *JsonToken) SetToken(token string) error {
 	b, err := hexutil.Decode(token)
 	if err != nil {
 		return err
 	}
 
-	err = json.Unmarshal(b, t)
+	tmp := struct {
+		ClaimJson string `json:"msg"`
+		Signature string `json:"sig"`
+	}{}
+
+	err = json.Unmarshal(b, &tmp)
 	if err != nil {
 		return err
 	}
+
+	t.ClaimJson = tmp.ClaimJson
+	t.Signature = tmp.Signature
+
+	fmt.Println(t.ClaimJson)
 
 	b, err = hexutil.Decode(t.ClaimJson)
 	if err != nil {
@@ -86,14 +108,14 @@ func (t JsonToken) SetToken(token string) error {
 }
 
 // MarshalJSON implements json.Marshaler for JsonToken.
-func (t JsonToken) MarshalJSON() ([]byte, error) {
+func (t *JsonToken) MarshalJSON() ([]byte, error) {
 	if len(t.ClaimJson) == 0 {
 		return nil, errors.New("jsontoken has no hex json claim")
 	}
 	if !t.Has("signature") {
 		return nil, errors.New("jsontoken has no signature")
 	}
-	return json.Marshal(t)
+	return json.Marshal(*t)
 }
 
 // UnmarshalJSON implements json.Unmarshaler for JsonToken.
@@ -107,27 +129,29 @@ func (t *JsonToken) UnmarshalJSON(b []byte) error {
 		return err
 	}
 
-	if err = json.Unmarshal(b, t.Claim); err != nil {
+	if err = json.Unmarshal(b, &t.Claim); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (t JsonToken) Sign(privateKey string) error {
+func (t *JsonToken) Sign(privateKey string) error {
 	if t.Has("signature") {
 		return errors.New("jsontoken already signed")
 	}
 	t.Del("signature")
 	err := t.SignedMsg()
 	if err != nil {
-		return nil
+		return err
 	}
+	fmt.Println("msg already")
 	signature, err := crypto.Sign(privateKey, t.ClaimJson)
 	if err != nil {
-		return nil
+		return err
 	}
 	t.Set("signature", signature)
 	t.Signature = signature
+	fmt.Println(signature)
 	return nil
 }
 
