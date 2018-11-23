@@ -42,6 +42,8 @@ func PubkeyToAddress(p ecdsa.PublicKey) common.Address {
 
 // HexToECDSA parses a secp256k1 private key.
 func HexToECDSA(hexkey string) (*ecdsa.PrivateKey, error) {
+	hexkey = string([]byte(hexkey)[2:])
+	fmt.Println(hexkey)
 	b, err := hex.DecodeString(hexkey)
 	if err != nil {
 		return nil, errors.New("invalid hex string")

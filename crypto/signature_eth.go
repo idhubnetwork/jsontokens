@@ -65,10 +65,11 @@ func Sign_ETH(hash []byte, key interface{}) ([]byte, error) {
 	if len(hash) != 32 {
 		return nil, fmt.Errorf("hash is required to be exactly 32 bytes (%d)", len(hash))
 	}
-
-	if prv.Curve != btcec.S256() {
-		return nil, fmt.Errorf("private key curve is not secp256k1")
-	}
+	/*
+		if prv.Curve != btcec.S256() {
+			return nil, fmt.Errorf("private key curve is not secp256k1")
+		}
+	*/
 
 	sig, err := btcec.SignCompact(btcec.S256(), (*btcec.PrivateKey)(prv), hash, false)
 	if err != nil {
@@ -89,14 +90,17 @@ func Sign_ETH(hash []byte, key interface{}) ([]byte, error) {
 func Sign(privateKey, msg string) (sigHex string, err error) {
 	data := []byte(msg)
 	hash := SignHash(data)
+	fmt.Println("hash already")
 	prv, err := HexToECDSA(privateKey)
 	if err != nil {
 		return "", err
 	}
+	fmt.Println("prv already")
 	signature, err := Sign_ETH(hash, prv)
 	if err != nil {
 		return "", err
 	}
+	fmt.Println("signature already")
 	sigHex = hexutil.Encode(signature)
 	return sigHex, nil
 }
