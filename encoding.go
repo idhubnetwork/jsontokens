@@ -33,5 +33,15 @@ func DecodeEscaped(b []byte) ([]byte, error) {
 	if len(b) > 1 && b[0] == '"' && b[len(b)-1] == '"' {
 		b = b[1 : len(b)-1]
 	}
+	return Base64Decode(b)
+}
+
+// DecodeEscapedNoBase64 decodes a byte slice straight from a JSON
+// structure. It assumes it's in the format: `"json"`, but can handle
+// cases where it's not.
+func DecodeEscapedNoBase64(b []byte) ([]byte, error) {
+	if len(b) > 1 && b[0] == '"' && b[len(b)-1] == '"' {
+		b = b[1 : len(b)-1]
+	}
 	return b, nil
 }
