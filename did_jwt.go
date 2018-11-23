@@ -65,7 +65,7 @@ func (t JWT) Sign(privateKey string) error {
 	return nil
 }
 
-func (t JWT) GetToken() (string, error) {
+func (t JWT) GetJWT() (string, error) {
 	if len(t.Sig) == 0 {
 		return "", errors.New("jwt not signed yet")
 	}
@@ -73,7 +73,7 @@ func (t JWT) GetToken() (string, error) {
 	return token, nil
 }
 
-func (t JWT) SetToken(token string) error {
+func (t JWT) SetJWT(token string) error {
 	tmp := regexp.MustCompile(`[\PP]+`).FindAllString(token, -1)
 	t.Header = tmp[0]
 	t.Payload = tmp[1]
