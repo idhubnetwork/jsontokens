@@ -41,13 +41,13 @@ func (t JsonToken) MarshalJSON() ([]byte, error) {
 	return json.Marshal(map[string]interface{}(t))
 }
 
-// UnmarshalJSON implements json.Unmarshaler for Claims.
+// UnmarshalJSON implements json.Unmarshaler for JsonToken.
 func (t *JsonToken) UnmarshalJSON(b []byte) error {
 	if b == nil {
 		return nil
 	}
 
-	b, err := DecodeEscaped(b)
+	b, err := DecodeEscapedNoBase64(b)
 	if err != nil {
 		return err
 	}

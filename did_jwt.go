@@ -49,7 +49,7 @@ func (t JWT) Sign(privateKey string) error {
 	if len(t.Payload) != 0 {
 		return errors.New("jwt already json marshal")
 	}
-	header := `{"alg": "ES256k", "typ": "JWT"}`
+	header := "{\"alg\":\"ES256k\",\"typ\":\"JWT\"}"
 	t.Header = string(Base64Encode([]byte(header)))
 	payload, err := json.Marshal(t.Claim)
 	if err != nil {
@@ -78,7 +78,12 @@ func (t JWT) SetToken(token string) error {
 	t.Header = tmp[0]
 	t.Payload = tmp[1]
 	t.Sig = tmp[2]
-	err := json.Unmarshal([]byte(t.Payload), t.Claim)
+	claim, err := Base64Decode([]byte(tmp[1]))
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(claim, t.Claim)
 	if err != nil {
 		return err
 	}
