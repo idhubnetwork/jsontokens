@@ -3,6 +3,7 @@ package jsontokens
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"regexp"
 
 	"github.com/idhubnetwork/jsontokens/crypto"
@@ -13,6 +14,16 @@ type JWT struct {
 	Payload string
 	Header  string
 	Sig     string
+}
+
+func NewJWT() *JWT {
+	jwt := JWT{
+		make(map[string]interface{}),
+		"",
+		"",
+		"",
+	}
+	return &jwt
 }
 
 // Get retrieves the value corresponding with key from the did jwt claim.
@@ -39,7 +50,7 @@ func (t JWT) Has(key string) bool {
 	return ok
 }
 
-func (t JWT) Sign(privateKey string) error {
+func (t *JWT) Sign(privateKey string) error {
 	if t.Claim == nil {
 		return errors.New("no claim to sign")
 	}
@@ -57,7 +68,8 @@ func (t JWT) Sign(privateKey string) error {
 	}
 	t.Payload = string(Base64Encode(payload))
 	msg := t.Header + "." + t.Payload
-	sig, err := crypto.Sign(privateKey, msg)
+	tmp, err := crypto.Sign_ETH(privateKey, msg)
+	sig := string(Base64Encode(tmp))
 	if err != nil {
 		return err
 	}
@@ -65,7 +77,7 @@ func (t JWT) Sign(privateKey string) error {
 	return nil
 }
 
-func (t JWT) GetJWT() (string, error) {
+func (t *JWT) GetJWT() (string, error) {
 	if len(t.Sig) == 0 {
 		return "", errors.New("jwt not signed yet")
 	}
@@ -73,20 +85,22 @@ func (t JWT) GetJWT() (string, error) {
 	return token, nil
 }
 
-func (t JWT) SetJWT(token string) error {
+func (t *JWT) SetJWT(token string) error {
 	tmp := regexp.MustCompile(`[\PP]+`).FindAllString(token, -1)
 	t.Header = tmp[0]
 	t.Payload = tmp[1]
 	t.Sig = tmp[2]
+	fmt.Println(t)
 	claim, err := Base64Decode([]byte(tmp[1]))
 	if err != nil {
 		return err
 	}
-
-	err = json.Unmarshal(claim, t.Claim)
+	// claim_tmp := make(map[string]interface{})
+	err = json.Unmarshal(claim, &t.Claim)
 	if err != nil {
 		return err
 	}
+	// t.Claim = claim_tmp
 	return nil
 }
 
