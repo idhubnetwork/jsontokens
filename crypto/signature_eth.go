@@ -107,6 +107,7 @@ func Ecrecover(hash, sig []byte) (publicKey string, err error) {
 	if err != nil {
 		return "", err
 	}
+	fmt.Println("[SigToPub END]")
 	// bytes := (*btcec.PublicKey)(pub).SerializeUncompressed()
 	// return bytes, err
 
