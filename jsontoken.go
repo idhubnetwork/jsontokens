@@ -161,11 +161,11 @@ func (t *JsonToken) Verify() error {
 	if len(t.Signature) == 0 {
 		return errors.New("jsontoken has no signature")
 	}
-	if !t.Claim.Has("did") {
+	if !t.Has("did") {
 		return errors.New("jsontoken has no did")
 	}
 
-	address, ok := t.Claim.Get("did").(string)
+	address, ok := t.Get("did").(string)
 	if !ok {
 		return errors.New("did is not a hex string")
 	}
