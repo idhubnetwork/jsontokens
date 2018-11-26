@@ -5,7 +5,9 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
+	did "github.com/idhubnetwork/jsontokens/contract"
 	"github.com/idhubnetwork/jsontokens/crypto"
 )
 
@@ -155,24 +157,38 @@ func (t *JsonToken) Sign(privateKey string) error {
 	return nil
 }
 
-func (t JsonToken) Verify() error {
-	if !t.Has("signature") {
+func (t *JsonToken) Verify() error {
+	if len(t.Signature) == 0 {
 		return errors.New("jsontoken has no signature")
 	}
-	if !t.Has("did") {
+	if !t.Claim.Has("did") {
 		return errors.New("jsontoken has no did")
 	}
-	signature, ok := t.Get("signature").(string)
+
+	address, ok := t.Claim.Get("did").(string)
 	if !ok {
-		return errors.New("signature is not a hex string")
+		return errors.New("did is not a hex string")
 	}
-	tmp, err := t.MarshalJSON()
+
+	authentication, err := crypto.EcRecover(t.ClaimJson, t.Signature)
+
+	instance, err := did.GetDid()
 	if err != nil {
-		return nil
+		return errors.New("get did instance failed")
 	}
-	did, err := crypto.EcRecover(signature, string(tmp))
-	if did != t.Get("did") {
+
+	identity := common.HexToAddress(address)
+	publickKeyType := [32]byte{}
+	copy(publickKeyType[:], "veriKey")
+	publickKey := common.HexToAddress(authentication)
+
+	ok, err = instance.ValidDelegate(nil, identity, publickKeyType, publickKey)
+	if err != nil {
+		return err
+	}
+	if !ok {
 		return errors.New("invalid signature or did")
 	}
+
 	return nil
 }
