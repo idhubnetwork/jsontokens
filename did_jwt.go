@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/ethereum/go-ethereum/common"
+	did "github.com/idhubnetwork/jsontokens/contract"
 	"github.com/idhubnetwork/jsontokens/crypto"
 )
 
@@ -104,4 +106,42 @@ func (t *JWT) SetJWT(token string) error {
 	return nil
 }
 
-// func (t JWT) Verify() error {}
+func (t *JWT) Verify() error {
+	if !t.Has("iss") {
+		return errors.New("jwt has no issuer")
+	}
+
+	address, ok := t.Get("iss").(string)
+	if !ok {
+		return errors.New("jwt issuer is not a hex string")
+	}
+
+	msg := []byte(t.Header + "." + t.Payload)
+	hash := crypto.SignHash(msg)
+	sig, err := Base64Decode([]byte(t.Sig))
+	if err != nil {
+		return err
+	}
+
+	authentication, err := crypto.Ecrecover(hash, sig)
+
+	instance, err := did.GetDid()
+	if err != nil {
+		return errors.New("get did instance failed")
+	}
+
+	identity := common.HexToAddress(address)
+	publickKeyType := [32]byte{}
+	copy(publickKeyType[:], "veriKey")
+	publickKey := common.HexToAddress(authentication)
+
+	ok, err = instance.ValidDelegate(nil, identity, publickKeyType, publickKey)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return errors.New("invalid signature or issuer")
+	}
+
+	return nil
+}

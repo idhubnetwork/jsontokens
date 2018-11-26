@@ -102,13 +102,17 @@ func Sign(privateKey, msg string) (sigHex string, err error) {
 }
 
 // Ecrecover returns the uncompressed public key that created the given signature.
-func Ecrecover(hash, sig []byte) (publicKey []byte, err error) {
+func Ecrecover(hash, sig []byte) (publicKey string, err error) {
 	pub, err := SigToPub(hash, sig)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	bytes := (*btcec.PublicKey)(pub).SerializeUncompressed()
-	return bytes, err
+	// bytes := (*btcec.PublicKey)(pub).SerializeUncompressed()
+	// return bytes, err
+
+	commAddr := PubkeyToAddress(*pub)
+
+	return commAddr.String(), nil
 }
 
 // EcRecover returns the address for the account that was used to create the signature.
