@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"regexp"
+	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
 	did "github.com/idhubnetwork/jsontokens/contract"
@@ -88,7 +88,8 @@ func (t *JWT) GetJWT() (string, error) {
 }
 
 func (t *JWT) SetJWT(token string) error {
-	tmp := regexp.MustCompile(`[\PP]+`).FindAllString(token, -1)
+	// tmp := regexp.MustCompile(`[\PP]+`).FindAllString(token, -1)
+	tmp := strings.Split(token, ".")
 	t.Header = tmp[0]
 	t.Payload = tmp[1]
 	t.Sig = tmp[2]
@@ -118,12 +119,16 @@ func (t *JWT) Verify() error {
 
 	msg := []byte(t.Header + "." + t.Payload)
 	hash := crypto.SignHash(msg)
+	fmt.Println(t.Sig)
 	sig, err := Base64Decode([]byte(t.Sig))
 	if err != nil {
 		return err
 	}
+	fmt.Println(len(sig))
 
+	fmt.Println("[START ECRECOVER]")
 	authentication, err := crypto.Ecrecover(hash, sig)
+	fmt.Println("[END ECRECOVER]")
 
 	instance, err := did.GetDid()
 	if err != nil {
