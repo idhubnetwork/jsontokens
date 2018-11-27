@@ -1,10 +1,6 @@
 # DID JSON TOKEN
 DID json token is for authorization and authentication with Ethereum Elliptic Curve Digital Signature Algorithm.It's a tools for creating and managing decentralized identities, and for requesting and exchanging verified data between identities.
 
-## EXAMPLE
-DID jsontoken is used to authorization and authentication for decentralized identities.
-DID JWT is a json web token with `{alg:ES256k}` in header due to signature algorithm only use Ethereum ECDSA.
-
 ## Getting started
 1. Install jsontokens
 ```sh
@@ -14,6 +10,10 @@ go get github.com/idhubnetwork/jsontokens
 ```sh
 dep ensure -v
 ```
+
+## EXAMPLE
+DID jsontoken is used to authorization and authentication for decentralized identities.
+DID JWT is a json web token with `{alg:ES256k}` in header due to signature algorithm only use Ethereum ECDSA.
 
 ### jsontoken
 * generate a new jsontoken
