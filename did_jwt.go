@@ -11,6 +11,15 @@ import (
 	"github.com/idhubnetwork/jsontokens/crypto"
 )
 
+// json web token indicates RFC7519 JWT strictly.
+const jsonwebtoken = "json web token"
+
+// A object used to handle jwt.
+//
+// Claim is map filled by jwt k/v, include credential(JWT) attribute.
+// Payload is base64 encoeded json string.
+// Header is base64 encoeded json string, defalut {\"alg\":\"ES256k\",\"typ\":\"JWT\"}.
+// Sig is base64 encoeded signature string.
 type JWT struct {
 	Claim   map[string]interface{}
 	Payload string
@@ -18,6 +27,7 @@ type JWT struct {
 	Sig     string
 }
 
+// Init a jwt struct.
 func NewJWT() *JWT {
 	jwt := JWT{
 		make(map[string]interface{}),
@@ -52,6 +62,8 @@ func (t JWT) Has(key string) bool {
 	return ok
 }
 
+// Sign jwt and assign signature to jwt.Sig and
+//  set jwt.Header, jwt.Payload together.
 func (t *JWT) Sign(privateKey string) error {
 	if t.Claim == nil {
 		return errors.New("no claim to sign")
@@ -79,6 +91,7 @@ func (t *JWT) Sign(privateKey string) error {
 	return nil
 }
 
+// Get a base64 encoded json web token assembled by a dot
 func (t *JWT) GetJWT() (string, error) {
 	if len(t.Sig) == 0 {
 		return "", errors.New("jwt not signed yet")
@@ -87,6 +100,7 @@ func (t *JWT) GetJWT() (string, error) {
 	return token, nil
 }
 
+// Split a json web token to a JWT struct.
 func (t *JWT) SetJWT(token string) error {
 	// tmp := regexp.MustCompile(`[\PP]+`).FindAllString(token, -1)
 	tmp := strings.Split(token, ".")
@@ -107,6 +121,7 @@ func (t *JWT) SetJWT(token string) error {
 	return nil
 }
 
+// Verify a JWT signature and iss did.
 func (t *JWT) Verify() error {
 	if !t.Has("iss") {
 		return errors.New("jwt has no issuer")

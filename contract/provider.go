@@ -13,6 +13,7 @@ var net = "infuraRopsten"
 
 // var err error
 
+// define ethereum net id
 func init() {
 	urls = make(map[string]string, 5)
 	urls["infuraMainnet"] = "https://mainnet.infura.io"
@@ -20,6 +21,7 @@ func init() {
 	urls["infuraRinkeby"] = "https://rinkeby.infura.io"
 }
 
+// default did contract instance in golang
 func defaultDid() (*Did, error) {
 	client, err := ethclient.Dial(urls[net])
 	if err != nil {
@@ -34,6 +36,7 @@ func defaultDid() (*Did, error) {
 	return contract, nil
 }
 
+// return a did contract instance in golang
 func GetDid(s ...string) (*Did, error) {
 	switch len(s) {
 	case 0:

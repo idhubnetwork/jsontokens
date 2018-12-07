@@ -11,12 +11,14 @@ import (
 	"github.com/idhubnetwork/jsontokens/crypto"
 )
 
+// A object to handle jsontoken.
 type JsonToken struct {
 	Claim     map[string]interface{} `json:"-",omitempty`
 	ClaimJson string                 `json:"msg"`
 	Signature string                 `json:"sig"`
 }
 
+// Init a JsonToken struct.
 func NewJsonToken() *JsonToken {
 	token := JsonToken{
 		make(map[string]interface{}),
@@ -50,6 +52,7 @@ func (t *JsonToken) Has(key string) bool {
 	return ok
 }
 
+// Jsonify attribute and assign it to ClaimJson.
 func (t *JsonToken) SignedMsg() error {
 	if t.Claim == nil || len(t.Claim) == 0 {
 		return errors.New("jsontoken no claim")
@@ -64,6 +67,7 @@ func (t *JsonToken) SignedMsg() error {
 	return nil
 }
 
+// Get a integrated jsontoken.
 func (t *JsonToken) GetToken() (string, error) {
 	tmp, err := t.MarshalJSON()
 	if err != nil {
@@ -74,6 +78,7 @@ func (t *JsonToken) GetToken() (string, error) {
 	// return string(tmp), nil
 }
 
+// Split a jsontoken to a JsonToken struct.
 func (t *JsonToken) SetToken(token string) error {
 	b, err := hexutil.Decode(token)
 	if err != nil {
@@ -137,6 +142,7 @@ func (t *JsonToken) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+// Sign attribute and assign signature to Signature.
 func (t *JsonToken) Sign(privateKey string) error {
 	if t.Has("signature") {
 		return errors.New("jsontoken already signed")
@@ -157,6 +163,7 @@ func (t *JsonToken) Sign(privateKey string) error {
 	return nil
 }
 
+// Verify a JsonToken signature and signer did.
 func (t *JsonToken) Verify() error {
 	if len(t.Signature) == 0 {
 		return errors.New("jsontoken has no signature")
