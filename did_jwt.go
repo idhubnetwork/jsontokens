@@ -38,6 +38,13 @@ func NewJWT() *JWT {
 	return &jwt
 }
 
+func (t *JWT) Reset() {
+	t.Claim = make(map[string]interface{})
+	t.Payload = ""
+	t.Header = ""
+	t.Sig = ""
+}
+
 // Get retrieves the value corresponding with key from the did jwt claim.
 func (t JWT) Get(key string) interface{} {
 	if t.Claim == nil {
