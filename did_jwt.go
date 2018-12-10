@@ -111,6 +111,9 @@ func (t *JWT) GetJWT() (string, error) {
 func (t *JWT) SetJWT(token string) error {
 	// tmp := regexp.MustCompile(`[\PP]+`).FindAllString(token, -1)
 	tmp := strings.Split(token, ".")
+	if len(tmp) != 3 {
+		return errors.New("invalid JWT")
+	}
 	t.Header = tmp[0]
 	t.Payload = tmp[1]
 	t.Sig = tmp[2]
@@ -149,6 +152,9 @@ func (t *JWT) Verify() error {
 	}
 
 	authentication, err := crypto.Ecrecover(hash, sig)
+	if err != nil {
+		return err
+	}
 
 	if authentication == address {
 		return nil
