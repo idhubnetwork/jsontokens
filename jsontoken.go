@@ -176,6 +176,7 @@ func (t *JsonToken) Verify() error {
 	if !ok {
 		return errors.New("did is not a hex string")
 	}
+	address = string(address[10:52])
 
 	authentication, err := crypto.EcRecover(t.ClaimJson, t.Signature)
 

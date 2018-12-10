@@ -138,6 +138,7 @@ func (t *JWT) Verify() error {
 	if !ok {
 		return errors.New("jwt issuer is not a hex string")
 	}
+	address = string(address[10:52])
 
 	msg := []byte(t.Header + "." + t.Payload)
 	hash := crypto.SignHash(msg)
