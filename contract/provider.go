@@ -8,10 +8,8 @@ import (
 )
 
 var urls map[string]string
-var address = ""
+var address = "0x07356Cc7c5641B24e22BCF1DBB77E9D7eaf44F68"
 var net = "infuraRopsten"
-
-// var err error
 
 // define ethereum net id
 func init() {
