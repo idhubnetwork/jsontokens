@@ -6,10 +6,10 @@ import (
 	"time"
 )
 
-var token_pri_key = "0x06da20d5a2ffdeb3f5b6bca5199a28d63a6efec4b1b8b9c6c493fc532ed324ec"
+var token_pri_key = ""
 
 const (
-	did        = ""
+	didTest    = ""
 	server_url = ""
 	CRUD       = ""
 	jwt_iss    = ""
@@ -20,7 +20,7 @@ const (
 
 func TestGetJsontokens(t *testing.T) {
 	jt := NewJsonToken()
-	jt.Set("did", did)
+	jt.Set("did", didTest)
 	jt.Set("expiration", time.Now().Unix()+int64(10000))
 	jt.Set("destination", server_url)
 	jt.Set("action", CRUD)

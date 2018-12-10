@@ -11,7 +11,6 @@ import (
 // did----0x7EbEE9a8A3530fd1e54017C39592A5a95af99d07
 var did_pri_key = "0x06da20d5a2ffdeb3f5b6bca5199a28d63a6efec4b1b8b9c6c493fc532ed324ec"
 
-// var privateKey = "0x6e365748e2a389106b24c241485a5308fb73548d43327c7a9fd4d972ca4cd472"
 var jwtTest = "eyJhbGciOiJFUzI1NmsiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJ0ZXN0IiwibmFtZSI6ImlkaHViIiwidHlwZSI6InRlc3QifQ.QT24XXc9iDKwfclvd1K-L2A7qBeXpZtXmfRodVPsS1V5SuK7CrQDwf0AHEQnU_BNg9aS4s17ESPeEuBg_rjv_xw"
 
 func TestGetCredentials(t *testing.T) {
