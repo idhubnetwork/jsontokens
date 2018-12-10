@@ -179,6 +179,10 @@ func (t *JsonToken) Verify() error {
 
 	authentication, err := crypto.EcRecover(t.ClaimJson, t.Signature)
 
+	if authentication == address {
+		return nil
+	}
+
 	instance, err := did.GetDid()
 	if err != nil {
 		return errors.New("get did instance failed")

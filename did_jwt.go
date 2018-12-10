@@ -141,16 +141,17 @@ func (t *JWT) Verify() error {
 
 	msg := []byte(t.Header + "." + t.Payload)
 	hash := crypto.SignHash(msg)
-	fmt.Println(t.Sig)
+
 	sig, err := Base64Decode([]byte(t.Sig))
 	if err != nil {
 		return err
 	}
-	fmt.Println(len(sig))
 
-	fmt.Println("[START ECRECOVER]")
 	authentication, err := crypto.Ecrecover(hash, sig)
-	fmt.Println("[END ECRECOVER]")
+
+	if authentication == address {
+		return nil
+	}
 
 	instance, err := did.GetDid()
 	if err != nil {
