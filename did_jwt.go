@@ -151,6 +151,12 @@ func (t *JWT) Verify() error {
 		return err
 	}
 
+	// https://github.com/ethereum/go-ethereum/blob/55599ee95d4151a2502465e0afc7c47bd1acba77/internal/ethapi/api.go#L442
+	if sig[64] != 27 && sig[64] != 28 {
+		return errors.New("nvalid Ethereum signature (V is not 27 or 28)")
+	}
+	sig[64] -= 27
+
 	authentication, err := crypto.Ecrecover(hash, sig)
 	if err != nil {
 		return err
