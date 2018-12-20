@@ -98,8 +98,6 @@ func (t *JsonToken) SetToken(token string) error {
 	t.ClaimJson = tmp.ClaimJson
 	t.Signature = tmp.Signature
 
-	fmt.Println(t.ClaimJson)
-
 	b, err = hexutil.Decode(t.ClaimJson)
 	if err != nil {
 		return err

@@ -4,13 +4,14 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 	"testing"
 	"time"
 )
 
-var did_pri_key = ""
+var did_pri_key = "0x06da20d5a2ffdeb3f5b6bca5199a28d63a6efec4b1b8b9c6c493fc532ed324ec"
 
-var jwtTest = "eyJhbGciOiJFUzI1NmsiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJ0ZXN0IiwibmFtZSI6ImlkaHViIiwidHlwZSI6InRlc3QifQ.QT24XXc9iDKwfclvd1K-L2A7qBeXpZtXmfRodVPsS1V5SuK7CrQDwf0AHEQnU_BNg9aS4s17ESPeEuBg_rjv_xw"
+var jwtTest = "eyJhbGciOiJFUzI1NmsiLCJ0eXAiOiJKV1QifQ.eyJhdWQiOiJkaWQ6aWRodWI6MHg0OWRCYThmOTA2Yzc0NUIwYTgyZjREMjFFMDJCQUZEN0RmMWEwYmU0IiwiZXhwIjoxNTQ5NDMxMTEwLCJpcGZzIjoiSVBGUzppZGh1YlRlc3QiLCJpc3MiOiJkaWQ6aWRodWI6MHg3RWJFRTlhOEEzNTMwZmQxZTU0MDE3QzM5NTkyQTVhOTVhZjk5ZDA3IiwianRpIjo1ODgyNSwibmV0IjoiIGV0aF9yb3BzdGVuIiwic3RhdHVzIjoxMCwic3ViIjoxfQ.9IgAbcwtV2SkTGwbmg-YkSMUyb49eh5ZA0lmm8uhXQc8SjkuTM32meF3hamDiQR2U-S14eg6M3lYcgJ2c9xvvBs"
 
 func TestGetCredentials(t *testing.T) {
 	outputFile, outputError := os.OpenFile("test_credential.json", os.O_WRONLY|os.O_CREATE, 0666)
@@ -25,11 +26,11 @@ func TestGetCredentials(t *testing.T) {
 	jwt := NewJWT()
 	for i := 1; i < 13; i++ {
 		jwt.Set("iss", "did:idhub:0x7EbEE9a8A3530fd1e54017C39592A5a95af99d07")
-		jwt.Set("sub", i)
+		jwt.Set("sub", strconv.Itoa(i))
 		jwt.Set("aud", "did:idhub:0x49dBa8f906c745B0a82f4D21E02BAFD7Df1a0be4")
 		jwt.Set("exp", time.Now().Unix()+int64(i*5000000))
-		jwt.Set("jti", i*58825)
-		jwt.Set("net", " eth_ropsten")
+		jwt.Set("jti", strconv.Itoa(i*58825))
+		jwt.Set("net", "eth_ropsten")
 		jwt.Set("ipfs", "IPFS:idhubTest")
 		switch i % 4 {
 		// 1111
@@ -67,7 +68,7 @@ func TestGetJWT(t *testing.T) {
 	jwt := NewJWT()
 	jwt.Set("name", "idhub")
 	jwt.Set("type", "test")
-	jwt.Set("iss", "test")
+	jwt.Set("iss", "did:idhub:0x7EbEE9a8A3530fd1e54017C39592A5a95af99d07")
 
 	fmt.Println(jwt)
 
