@@ -59,12 +59,10 @@ func Sign_ECDSA(hash []byte, key interface{}) ([]byte, error) {
 func Sign_ETH(privateKey, msg string) ([]byte, error) {
 	data := []byte(msg)
 	hash := SignHash(data)
-	fmt.Println("hash already")
 	prv, err := HexToECDSA(privateKey)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("prv already")
 
 	if len(hash) != 32 {
 		return nil, fmt.Errorf("hash is required to be exactly 32 bytes (%d)", len(hash))
@@ -96,7 +94,6 @@ func Sign(privateKey, msg string) (sigHex string, err error) {
 	if err != nil {
 		return "", err
 	}
-	fmt.Println("signature already")
 	sigHex = hexutil.Encode(signature)
 	return sigHex, nil
 }
@@ -107,7 +104,7 @@ func Ecrecover(hash, sig []byte) (publicKey string, err error) {
 	if err != nil {
 		return "", err
 	}
-	fmt.Println("[SigToPub END]")
+
 	// bytes := (*btcec.PublicKey)(pub).SerializeUncompressed()
 	// return bytes, err
 

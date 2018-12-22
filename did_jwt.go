@@ -3,7 +3,6 @@ package jsontokens
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -117,7 +116,7 @@ func (t *JWT) SetJWT(token string) error {
 	t.Header = tmp[0]
 	t.Payload = tmp[1]
 	t.Sig = tmp[2]
-	fmt.Println(t)
+
 	claim, err := Base64Decode([]byte(tmp[1]))
 	if err != nil {
 		return err

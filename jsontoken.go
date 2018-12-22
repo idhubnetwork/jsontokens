@@ -3,7 +3,6 @@ package jsontokens
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -63,7 +62,7 @@ func (t *JsonToken) SignedMsg() error {
 	}
 
 	t.ClaimJson = hexutil.Encode(tmp)
-	fmt.Println(t.ClaimJson)
+
 	return nil
 }
 
@@ -150,14 +149,14 @@ func (t *JsonToken) Sign(privateKey string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("msg already")
+
 	signature, err := crypto.Sign(privateKey, t.ClaimJson)
 	if err != nil {
 		return err
 	}
 	t.Set("signature", signature)
 	t.Signature = signature
-	fmt.Println(signature)
+
 	return nil
 }
 
