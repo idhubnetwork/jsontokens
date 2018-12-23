@@ -131,7 +131,7 @@ func (t *JWT) SetJWT(token string) error {
 }
 
 // Verify a JWT signature and iss did.
-func (t *JWT) Verify() error {
+func (t *JWT) Verify(args ...string) error {
 	if !t.Has("iss") {
 		return errors.New("jwt has no issuer")
 	}
@@ -165,7 +165,7 @@ func (t *JWT) Verify() error {
 		return nil
 	}
 
-	instance, err := did.GetDid()
+	instance, err := did.GetDid(args)
 	if err != nil {
 		return errors.New("get did instance failed")
 	}

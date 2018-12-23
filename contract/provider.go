@@ -35,7 +35,7 @@ func defaultDid() (*Did, error) {
 }
 
 // return a did contract instance in golang
-func GetDid(s ...string) (*Did, error) {
+func GetDid(s []string) (*Did, error) {
 	switch len(s) {
 	case 0:
 		return defaultDid()

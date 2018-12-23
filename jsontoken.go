@@ -161,7 +161,7 @@ func (t *JsonToken) Sign(privateKey string) error {
 }
 
 // Verify a JsonToken signature and signer did.
-func (t *JsonToken) Verify() error {
+func (t *JsonToken) Verify(args ...string) error {
 	if len(t.Signature) == 0 {
 		return errors.New("jsontoken has no signature")
 	}
@@ -184,7 +184,7 @@ func (t *JsonToken) Verify() error {
 		return nil
 	}
 
-	instance, err := did.GetDid()
+	instance, err := did.GetDid(args)
 	if err != nil {
 		return errors.New("get did instance failed")
 	}
