@@ -3,6 +3,7 @@ package jsontokens
 import (
 	"encoding/json"
 	"errors"
+	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -180,7 +181,7 @@ func (t *JsonToken) Verify(args ...string) error {
 		return err
 	}
 
-	if authentication == address {
+	if strings.ToLower(authentication) == strings.ToLower(address) {
 		return nil
 	}
 
